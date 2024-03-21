@@ -20,12 +20,12 @@ func intToHex(num int) string {
 type daemon struct {
 	lock        sync.RWMutex
 	latestBlock int
-	client      *rpcClient
+	client      *client
 	subscribers map[string]bool
 }
 
 func newDaemon(url string) *daemon {
-	return &daemon{sync.RWMutex{}, -1, newRpcClient(url), make(map[string]bool)}
+	return &daemon{sync.RWMutex{}, -1, newClient(url), make(map[string]bool)}
 }
 
 func (daemon *daemon) subscribe(address string) bool {

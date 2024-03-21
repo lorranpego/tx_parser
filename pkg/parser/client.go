@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-type rpcRequest struct {
+type request struct {
 	Id      int           `json:"id"`
 	Jsonrpc string        `json:"jsonrpc"`
 	Method  string        `json:"method"`
@@ -48,7 +48,7 @@ type blockResponse struct {
 	} `json:"result"`
 }
 
-type rpcClient struct {
+type client struct {
 	url string
 	seq int
 }
@@ -60,13 +60,13 @@ const (
 	httpAccept              = "application/json"
 )
 
-func newRpcClient(url string) *rpcClient {
-	return &rpcClient{url, 0}
+func newClient(url string) *client {
+	return &client{url, 0}
 }
 
-func (client *rpcClient) doRequest(method string, params []interface{}) (*http.Response, error) {
+func (client *client) doRequest(method string, params []interface{}) (*http.Response, error) {
 	defer func() { client.seq++ }()
-	req := rpcRequest{
+	req := request{
 		Id:      client.seq,
 		Jsonrpc: rpcRequestVersion,
 		Method:  method,
@@ -95,7 +95,7 @@ func closeResponse(resp *http.Response) {
 }
 
 // GetRecentBlockNumber curl -X POST --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"seq":83}'
-func (client *rpcClient) getRecentBlockNumber() (*blockNumberResponse, error) {
+func (client *client) getRecentBlockNumber() (*blockNumberResponse, error) {
 	resp, err := client.doRequest(rpcBlockNumberMethod, []interface{}{})
 
 	if err != nil {
@@ -112,7 +112,7 @@ func (client *rpcClient) getRecentBlockNumber() (*blockNumberResponse, error) {
 }
 
 // GetBlockByNumber curl -X POST --data '{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["0x1b4", true],"seq":1}'
-func (client *rpcClient) getBlockByNumber(num string) (*blockResponse, error) {
+func (client *client) getBlockByNumber(num string) (*blockResponse, error) {
 	resp, err := client.doRequest(rpcGetBlockNumberMethod, []interface{}{
 		num, true,
 	})
